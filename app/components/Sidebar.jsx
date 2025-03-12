@@ -7,11 +7,11 @@ import profile from "../../public/profile.png"
 export default function Sidebar({ isOpen }) {
   return (
     <aside
-      className={`fixed inset-y-0 left-0 z-50 w-64 bg-white transition-transform duration-300 ease-in-out ${
+      className={`fixed inset-y-0 left-0 ${isOpen ? 'z-50' : 'z-40'} w-64 bg-white text-black transition-transform duration-300 ease-in-out ${
         isOpen ? "translate-x-0" : "-translate-x-full"
       } md:relative md:translate-x-0`}
     >
-      <nav className="flex flex-col p-4 items-center border-r border-gray-200 h-full">
+      <nav className="flex flex-col p-4 items-center border-r border-gray-200 h-full text-black">
         <div className="flex md:hidden items-center border border-gray-300 rounded-md shadow mb-5">
           <Image
             src={profile}

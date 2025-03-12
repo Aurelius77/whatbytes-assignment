@@ -4,15 +4,33 @@ import Image from "next/image"
 import Navbar from "./components/Navbar"
 import Sidebar from "./components/Sidebar"
 import html from '../public/html.png'
+import { ComparisonGraph } from "./components/ComparisonGraph"
+import { QuestionAnalysisChart } from "./components/QuestionAnalysis"
+import { UpdateScoresModal } from "./components/UpdateModal"
 
 
 export default function Home() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false)
+  const [rank, setRank] = useState(1)
+  const [percentile, setPercentile] = useState(30)
+  const [score, setScore] = useState(10)
+
+
+
+  function handleUpdate() {
+
+
+    setIsUpdateModalOpen(true)
+  }
+
+
   return (
     <div className="flex flex-col h-screen">
       <Navbar
         toggleSidebar={() => {
           setIsSidebarOpen(!isSidebarOpen)
+
         }}
       />
 
@@ -39,7 +57,9 @@ export default function Home() {
                 <p className="text-gray-600">Questions: 08 | Duration: 15 mins | Submitted on June 5 2021</p>
               </div>
             </div>
-            <button className="bg-blue-800 text-white px-6 py-2 rounded-md hover:bg-blue-900 transition-colors">
+            <button className=" cursor-pointer bg-blue-800 text-white px-6 py-2 rounded-md hover:bg-blue-900 transition-colors"
+              onClick={handleUpdate}
+            >
               Update
             </button>
           </div>
@@ -53,7 +73,7 @@ export default function Home() {
                   <div className="border rounded-lg p-6 flex items-center gap-4">
                     <div className="text-yellow-500 text-2xl">🏆</div>
                     <div>
-                      <h3 className="text-2xl font-bold">1</h3>
+                      <h3 className="text-2xl font-bold">{rank}</h3>
                       <p className="text-gray-500 text-sm">YOUR RANK</p>
                     </div>
                   </div>
@@ -61,7 +81,7 @@ export default function Home() {
                   <div className="border rounded-lg p-6 flex items-center gap-4">
                     <div className="text-gray-400 text-2xl">📄</div>
                     <div>
-                      <h3 className="text-2xl font-bold">30%</h3>
+                      <h3 className="text-2xl font-bold">{percentile}</h3>
                       <p className="text-gray-500 text-sm">PERCENTILE</p>
                     </div>
                   </div>
@@ -69,53 +89,30 @@ export default function Home() {
                   <div className="border rounded-lg p-6 flex items-center gap-4">
                     <div className="text-green-500 text-2xl">✅</div>
                     <div>
-                      <h3 className="text-2xl font-bold">10 / 15</h3>
+                      <h3 className="text-2xl font-bold">{score}/ 15</h3>
                       <p className="text-gray-500 text-sm">CORRECT ANSWERS</p>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div>
+              <section className="mb-6">
                 <h2 className="text-lg font-semibold mb-4">Comparison Graph</h2>
                 <div className="border rounded-lg p-6">
                   <div className="flex items-start justify-between mb-6">
                     <div className="max-w-md">
                       <p className="text-gray-700">
-                        You scored <span className="font-bold">30% percentile</span> which is lower than the average
-                        percentile 72% of all the engineers who took this assessment
+                        You scored <span className="font-bold">{percentile} percentile</span> which is lower than the average percentile
+                        72% of all the engineers who took this assessment
                       </p>
                     </div>
-                    <div className="bg-gray-100 p-2 rounded-lg">
-                    </div>
                   </div>
-
-                  <div className="h-64 w-full flex items-center justify-center border-t border-l relative">
-                    <div className="absolute right-10 top-4 border p-2 rounded-md bg-white text-sm">
-                      <p>90</p>
-                      <p className="text-blue-500">numberOfStudent : 4</p>
-                    </div>
-
-                    <svg viewBox="0 0 500 200" className="w-full h-full">
-                      <path
-                        d="M 50,180 C 100,150 150,100 200,150 C 250,50 300,20 350,80 C 400,120 450,180 500,180"
-                        fill="none"
-                        stroke="#ddd"
-                        strokeWidth="2"
-                      />
-                      <circle cx="200" cy="150" r="4" fill="#6366f1" />
-                      <text x="180" y="170" fontSize="10" fill="#666">
-                        your percentile
-                      </text>
-                      <circle cx="350" cy="80" r="4" fill="#6366f1" />
-                      <circle cx="490" cy="50" r="6" fill="#6366f1" />
-                    </svg>
-                  </div>
+                  <ComparisonGraph userPercentile={percentile} averagePercentile={72} />
                 </div>
-              </div>
+              </section>
             </div>
 
-            <div className="space-y-6">
+            <section className="space-y-6">
               <div>
                 <h2 className="text-lg font-semibold mb-4">Syllabus Wise Analysis</h2>
                 <div className="space-y-6">
@@ -162,18 +159,23 @@ export default function Home() {
               </div>
 
               <div>
-                <h2 className="text-lg font-semibold mb-4 flex justify-between">
+                <h2 className="text-lg font-semibold mb-4 mt-4 flex justify-between">
                   <span>Question Analysis</span>
-                  <span className="text-blue-600">10/15</span>
+                  <span className="text-blue-600">{`${score}/15`}</span>
                 </h2>
-                <div className="border rounded-lg p-6">
-                  <p className="mb-2">
-                    <span className="font-semibold">You scored 10 question correct out of 15.</span> However it still
-                    needs some improvements
-                  </p>
+                <div className="border rounded-lg p-4">
+                  <div className="flex flex-col items-center gap-6">
+                    <QuestionAnalysisChart correct={score} total={15} />
+                    <p className="mb-2">
+                      <span className="font-semibold">
+                        You scored {score} question correct out of {15}.
+                      </span>{" "}
+                      {score >= 15 ? 'You did well' : 'However it still needs some improvements'}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
+            </section>
           </div>
         </div>
       </div>
@@ -184,6 +186,24 @@ export default function Home() {
           onClick={() => setIsSidebarOpen(false)}
         ></div>
       )}
+
+
+
+      {isUpdateModalOpen && (
+        <UpdateScoresModal
+          rank={rank}
+          percentile={percentile}
+          score={score}
+          setRank={setRank}
+          setPercentile={setPercentile}
+          setScore={setScore}
+          onClose={() => setIsUpdateModalOpen(false)}
+          onSave={() => {
+            setIsUpdateModalOpen(false)
+          }}
+        />
+      )}
+
     </div>
   )
 }
